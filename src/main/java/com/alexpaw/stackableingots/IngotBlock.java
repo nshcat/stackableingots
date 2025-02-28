@@ -83,8 +83,6 @@ public class IngotBlock extends BaseEntityBlock {
             player.addItem(be.removeLastIngot());
         }
 
-
-
         if (be.getIngots().isEmpty()) level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
         return InteractionResult.SUCCESS;
     }

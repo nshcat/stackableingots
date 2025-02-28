@@ -30,27 +30,30 @@ public class IngotBlockInteractionHelper
             if (state.is(INGOT_BLOCK.get())) // Yes we are
             {
                 // Pile is already full
-                if(state.getValue(IngotBlock.COUNT) == 64){
-                    for (int i = 1; i < event.getLevel().getMaxBuildHeight(); i++){
+                if(state.getValue(IngotBlock.COUNT) == 64)
+                {
+                    for (int i = 1; i < event.getLevel().getMaxBuildHeight(); i++)
+                    {
                         BlockPos pos1 = pos.offset(0,i,0);
-                        if (event.getLevel().getBlockState(pos1).isAir()){
+                        if (event.getLevel().getBlockState(pos1).isAir())
+                        {
                             if (event.getLevel().isClientSide())
                             {
                                 event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1f, 1f);
                             }
-                            else {
-                                event.getLevel().setBlockAndUpdate(pos1, INGOT_BLOCK.get().defaultBlockState());
-                                event.getLevel().getBlockEntity(pos1, INGOT_BLOCK_ENTITY.get()).ifPresent(be -> {
-                                    ((IngotBlockEntity) be).addIngot(event.getItemStack().copyWithCount(1));
-                                    ((IngotBlockEntity) be).markForSync();
-                                });
+                            else
+                            {
+                                createIngotPile(player, event.getLevel(), pos1, event.getItemStack());
                             }
                             event.setUseItem(Event.Result.ALLOW);
                             event.setCancellationResult(InteractionResult.CONSUME);
                             event.setCanceled(true);
                             break;
-                        } else if (event.getLevel().getBlockState(pos1).is(INGOT_BLOCK.get())){
-                            if (event.getLevel().getBlockState(pos1).getValue(IngotBlock.COUNT) == 64) continue;
+                        }
+                        else if (event.getLevel().getBlockState(pos1).is(INGOT_BLOCK.get()))
+                        {
+                            if (event.getLevel().getBlockState(pos1).getValue(IngotBlock.COUNT) == 64)
+                                continue;
 
                             if (event.getLevel().isClientSide())
                             {
@@ -59,8 +62,7 @@ public class IngotBlockInteractionHelper
                             else
                             {
                                 event.getLevel().getBlockEntity(pos1,INGOT_BLOCK_ENTITY.get()).ifPresent(be->{
-                                    ((IngotBlockEntity)be).addIngot(event.getItemStack().copyWithCount(1));
-                                    consumeItem(event.getItemStack(),player, 1);
+                                    addToIngotPile(player, event.getItemStack(), (IngotBlockEntity) be);
                                 });
                             }
 
@@ -79,9 +81,8 @@ public class IngotBlockInteractionHelper
                     }
                     else
                     {
-                        event.getLevel().getBlockEntity(pos, INGOT_BLOCK_ENTITY.get()).ifPresent(i -> {
-                            ((IngotBlockEntity) i).addIngot(event.getItemStack().copyWithCount(1));
-                            consumeItem(event.getItemStack(), player, 1);
+                        event.getLevel().getBlockEntity(pos, INGOT_BLOCK_ENTITY.get()).ifPresent(be -> {
+                            addToIngotPile(player, event.getItemStack(), (IngotBlockEntity) be);
                         });
                     }
                     event.setUseItem(Event.Result.ALLOW);
@@ -117,20 +118,25 @@ public class IngotBlockInteractionHelper
     {
         level.setBlockAndUpdate(position, INGOT_BLOCK.get().defaultBlockState());
         level.getBlockEntity(position, INGOT_BLOCK_ENTITY.get()).ifPresent(be -> {
-            // If player is crouching, place whole item stack in hand
-            if(player.isCrouching())
-            {
-                int addedIngots = ((IngotBlockEntity) be).addIngotsUntilFull(handItemStack);
-                consumeItem(handItemStack, player, addedIngots);
-            }
-            else
-            {
-                ((IngotBlockEntity) be).addIngot(handItemStack.copyWithCount(1));
-                consumeItem(handItemStack, player, 1);
-            }
-
-            ((IngotBlockEntity) be).markForSync();
+            addToIngotPile(player, handItemStack, (IngotBlockEntity) be);
         });
+    }
+
+    private static void addToIngotPile(Player player, ItemStack handItemStack, IngotBlockEntity be)
+    {
+        // If player is crouching, place whole item stack in hand
+        if(player.isCrouching())
+        {
+            int addedIngots = be.addIngotsUntilFull(handItemStack);
+            consumeItem(handItemStack, player, addedIngots);
+        }
+        else
+        {
+            be.addIngot(handItemStack.copyWithCount(1));
+            consumeItem(handItemStack, player, 1);
+        }
+
+        be.markForSync();
     }
 
     private static void consumeItem(ItemStack stack, Player player, int amount)
