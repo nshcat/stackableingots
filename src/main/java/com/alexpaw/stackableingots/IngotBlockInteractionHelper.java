@@ -30,16 +30,17 @@ public class IngotBlockInteractionHelper
             if (state.is(INGOT_BLOCK.get())) // Yes we are
             {
                 // Pile is already full
-                if(state.getValue(IngotBlock.COUNT) == 64)
+                if (state.getValue(IngotBlock.COUNT) == 64)
                 {
                     for (int i = 1; i < event.getLevel().getMaxBuildHeight(); i++)
                     {
-                        BlockPos pos1 = pos.offset(0,i,0);
+                        BlockPos pos1 = pos.offset(0, i, 0);
                         if (event.getLevel().getBlockState(pos1).isAir())
                         {
                             if (event.getLevel().isClientSide())
                             {
-                                event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1f, 1f);
+                                event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE,
+                                                           SoundSource.BLOCKS, 1f, 1f);
                             }
                             else
                             {
@@ -53,15 +54,18 @@ public class IngotBlockInteractionHelper
                         else if (event.getLevel().getBlockState(pos1).is(INGOT_BLOCK.get()))
                         {
                             if (event.getLevel().getBlockState(pos1).getValue(IngotBlock.COUNT) == 64)
+                            {
                                 continue;
+                            }
 
                             if (event.getLevel().isClientSide())
                             {
-                                event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1f, 1f);
+                                event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE,
+                                                           SoundSource.BLOCKS, 1f, 1f);
                             }
                             else
                             {
-                                event.getLevel().getBlockEntity(pos1,INGOT_BLOCK_ENTITY.get()).ifPresent(be->{
+                                event.getLevel().getBlockEntity(pos1, INGOT_BLOCK_ENTITY.get()).ifPresent(be -> {
                                     addToIngotPile(player, event.getItemStack(), (IngotBlockEntity) be);
                                 });
                             }
@@ -77,7 +81,8 @@ public class IngotBlockInteractionHelper
                 {
                     if (event.getLevel().isClientSide())
                     {
-                        event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1f, 1f);
+                        event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS,
+                                                   1f, 1f);
                     }
                     else
                     {
@@ -99,7 +104,8 @@ public class IngotBlockInteractionHelper
                 {
                     if (event.getLevel().isClientSide())
                     {
-                        event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1f, 1f);
+                        event.getLevel().playSound(player, event.getPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS,
+                                                   1f, 1f);
                     }
                     else
                     {
@@ -125,7 +131,7 @@ public class IngotBlockInteractionHelper
     private static void addToIngotPile(Player player, ItemStack handItemStack, IngotBlockEntity be)
     {
         // If player is crouching, place whole item stack in hand
-        if(player.isCrouching())
+        if (player.isCrouching())
         {
             int addedIngots = be.addIngotsUntilFull(handItemStack);
             consumeItem(handItemStack, player, addedIngots);
@@ -145,7 +151,9 @@ public class IngotBlockInteractionHelper
         {
             stack.setCount(stack.getCount() - amount);
             if (player != null)
+            {
                 player.swing(InteractionHand.MAIN_HAND);
+            }
         }
     }
 

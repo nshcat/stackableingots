@@ -9,32 +9,38 @@ import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 @GTAddon
-public class StackableIngotsGTAddon implements IGTAddon {
+public class StackableIngotsGTAddon implements IGTAddon
+{
     @Override
-    public GTRegistrate getRegistrate() {
+    public GTRegistrate getRegistrate()
+    {
         return StackableIngotsMod.EXAMPLE_REGISTRATE;
     }
 
     @Override
-    public void initializeAddon() {
+    public void initializeAddon()
+    {
 
     }
 
     @Override
-    public String addonModId() {
+    public String addonModId()
+    {
         return StackableIngotsMod.MOD_ID;
     }
 
     @Override
-    public void registerTagPrefixes() {
+    public void registerTagPrefixes()
+    {
         //CustomTagPrefixes.init();
     }
 
     @Override
-    public void addRecipes(Consumer<FinishedRecipe> provider) {
+    public void addRecipes(Consumer<FinishedRecipe> provider)
+    {
         //CustomRecipes.init(provider);
     }
-    
+
     // If you have custom ingredient types, uncomment this & change to match your capability.
     // KubeJS WILL REMOVE YOUR RECIPES IF THESE ARE NOT REGISTERED.
     /*

@@ -1,4 +1,3 @@
-
 package com.alexpaw.stackableingots.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -10,20 +9,32 @@ import net.minecraft.util.FastColor;
 
 public final class RenderHelpers
 {
-    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, boolean doShade, int color)
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite,
+                                            int packedLight, int packedOverlay, float minX, float minY, float minZ,
+                                            float maxX, float maxY, float maxZ, boolean doShade, int color)
     {
-        renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, minX, minY, minZ, maxX, maxY, maxZ, 16f * (maxX - minX), 16f * (maxY - minY), 16f * (maxZ - minZ), doShade, color);
+        renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, minX, minY, minZ, maxX, maxY, maxZ,
+                             16f * (maxX - minX), 16f * (maxY - minY), 16f * (maxZ - minZ), doShade, color);
     }
 
     /**
      * Renders a fully textured, solid cuboid described by the shape (minX, minY, minZ) x (maxX, maxY, maxZ).
      * (xPixels, yPixels, zPixels) represent pixel widths for each side, which are used for texture (u, v) purposes.
      */
-    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float xPixels, float yPixels, float zPixels, boolean doShade, int color)
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite,
+                                            int packedLight, int packedOverlay, float minX, float minY, float minZ,
+                                            float maxX, float maxY, float maxZ, float xPixels, float yPixels,
+                                            float zPixels, boolean doShade, int color)
     {
-        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getXVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, yPixels, 1, 0, 0, doShade, color);
-        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getYVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, xPixels, 0, 1, 0, doShade, color);
-        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getZVertices(minX, minY, minZ, maxX, maxY, maxZ), xPixels, yPixels, 0, 0, 1, doShade, color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay,
+                            getXVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, yPixels, 1, 0, 0, doShade,
+                            color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay,
+                            getYVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, xPixels, 0, 1, 0, doShade,
+                            color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay,
+                            getZVertices(minX, minY, minZ, maxX, maxY, maxZ), xPixels, yPixels, 0, 0, 1, doShade,
+                            color);
     }
 
 
@@ -36,23 +47,30 @@ public final class RenderHelpers
      * @param uSize    The horizontal (u) texture size of the quad, in pixels.
      * @param vSize    The vertical (v) texture size of the quad, in pixels.
      */
-    public static void renderTexturedQuads(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float[][] vertices, float uSize, float vSize, float normalX, float normalY, float normalZ, boolean doShade,int color)
+    public static void renderTexturedQuads(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite,
+                                           int packedLight, int packedOverlay, float[][] vertices, float uSize,
+                                           float vSize, float normalX, float normalY, float normalZ, boolean doShade,
+                                           int color)
     {
         for (float[] v : vertices)
         {
-            renderTexturedVertex(poseStack, buffer, packedLight, packedOverlay, v[0], v[1], v[2], sprite.getU(v[3] * uSize), sprite.getV(v[4] * vSize), v[5] * normalX, v[5] * normalY, v[5] * normalZ, doShade,color);
+            renderTexturedVertex(poseStack, buffer, packedLight, packedOverlay, v[0], v[1], v[2],
+                                 sprite.getU(v[3] * uSize), sprite.getV(v[4] * vSize), v[5] * normalX, v[5] * normalY,
+                                 v[5] * normalZ, doShade, color);
         }
     }
 
 
-    public static void renderTexturedVertex(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, boolean doShade,int color)
+    public static void renderTexturedVertex(PoseStack poseStack, VertexConsumer buffer, int packedLight,
+                                            int packedOverlay, float x, float y, float z, float u, float v,
+                                            float normalX, float normalY, float normalZ, boolean doShade, int color)
     {
         float r = FastColor.ARGB32.red(color) / 255.0f;
         float g = FastColor.ARGB32.green(color) / 255.0f;
         float b = FastColor.ARGB32.blue(color) / 255.0f;
         float a = FastColor.ARGB32.alpha(color) / 255.0f;
 
-        if(doShade)
+        if (doShade)
         {
             final var shade = getShade(normalX, normalY, normalZ);
             r *= shade;
@@ -77,26 +95,32 @@ public final class RenderHelpers
 
     public static float getShadeForStep(int normalX, int normalY, int normalZ)
     {
-        if (normalY == 1) return 1f;
-        if (normalY == -1) return 0.5f;
-        if (normalZ != 0) return 0.8f;
-        if (normalX != 0) return 0.6f;
+        if (normalY == 1)
+        {
+            return 1f;
+        }
+        if (normalY == -1)
+        {
+            return 0.5f;
+        }
+        if (normalZ != 0)
+        {
+            return 0.8f;
+        }
+        if (normalX != 0)
+        {
+            return 0.6f;
+        }
         return 1f;
     }
 
     public static float[][] getXVertices(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
     {
-        return new float[][] {
-                {minX, minY, minZ, 2, 1, 1}, // +X
-                {minX, minY, maxZ, 3, 1, 1},
-                {minX + 1/32f, maxY, maxZ - 1/32f, 3, 0, 1},
-                {minX + 1/32f, maxY, minZ + 1/32f, 2, 0, 1},
+        return new float[][]{{minX, minY, minZ, 2, 1, 1}, // +X
+                {minX, minY, maxZ, 3, 1, 1}, {minX + 1 / 32f, maxY, maxZ - 1 / 32f, 3, 0, 1}, {minX + 1 / 32f, maxY, minZ + 1 / 32f, 2, 0, 1},
 
                 {maxX, minY, maxZ, 2, 0, -1}, // -X
-                {maxX, minY, minZ, 1, 0, -1},
-                {maxX - 1/32f, maxY, minZ + 1/32f, 1, 1, -1},
-                {maxX - 1/32f, maxY, maxZ - 1/32f, 2, 1, -1}
-        };
+                {maxX, minY, minZ, 1, 0, -1}, {maxX - 1 / 32f, maxY, minZ + 1 / 32f, 1, 1, -1}, {maxX - 1 / 32f, maxY, maxZ - 1 / 32f, 2, 1, -1}};
     }
 
     /**
@@ -115,11 +139,8 @@ public final class RenderHelpers
 
     public static float[][] getYVertices(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
     {
-        return new float[][] {
-                {minX + 1/32f, maxY, minZ + 1/32f, 0, 1, 1}, // +Y
-                {minX + 1/32f, maxY, maxZ - 1/32f, 1, 1, 1},
-                {maxX - 1/32f, maxY, maxZ - 1/32f, 1, 0, 1},
-                {maxX - 1/32f, maxY, minZ + 1/32f, 0, 0, 1},
+        return new float[][]{{minX + 1 / 32f, maxY, minZ + 1 / 32f, 0, 1, 1}, // +Y
+                {minX + 1 / 32f, maxY, maxZ - 1 / 32f, 1, 1, 1}, {maxX - 1 / 32f, maxY, maxZ - 1 / 32f, 1, 0, 1}, {maxX - 1 / 32f, maxY, minZ + 1 / 32f, 0, 0, 1},
 
                 {minX, minY, maxZ, 1, 1, -1}, // -Y (V = 0 → 1)
                 {minX, minY, minZ, 0, 1, -1}, // -Y (V = 0 → 1)
@@ -145,17 +166,11 @@ public final class RenderHelpers
 
     public static float[][] getZVertices(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
     {
-        return new float[][] {
-                {maxX , minY, minZ, 0, 5, 1}, // +Z
-                {minX , minY, minZ, 1, 5, 1},
-                {minX + 1/32f , maxY, minZ + 1/32f, 1, 4, 1},
-                {maxX - 1/32f , maxY, minZ + 1/32f, 0, 4, 1},
+        return new float[][]{{maxX, minY, minZ, 0, 5, 1}, // +Z
+                {minX, minY, minZ, 1, 5, 1}, {minX + 1 / 32f, maxY, minZ + 1 / 32f, 1, 4, 1}, {maxX - 1 / 32f, maxY, minZ + 1 / 32f, 0, 4, 1},
 
                 {minX, minY, maxZ, 1, 5, -1}, // -Z
-                {maxX, minY, maxZ, 0, 5, -1},
-                {maxX - 1/32f, maxY, maxZ -1/32f, 0, 6, -1},
-                {minX + 1/32f, maxY, maxZ -1/32f, 1, 6, -1}
-        };
+                {maxX, minY, maxZ, 0, 5, -1}, {maxX - 1 / 32f, maxY, maxZ - 1 / 32f, 0, 6, -1}, {minX + 1 / 32f, maxY, maxZ - 1 / 32f, 1, 6, -1}};
     }
 
 
