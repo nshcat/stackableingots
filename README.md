@@ -26,6 +26,7 @@ Heavily modified (and fixed) version of https://github.com/iglee42/PlaceableIngo
 - Jade integration
 
 ## TODO, mostly dev stuff
+- Improve performance (working on it)
 - Make all string literals translateable
 - Either make ingot piles not mineable, or fix mining particles showing the missing texture texture
 - Rework old, bad code from IngotBlock.java
