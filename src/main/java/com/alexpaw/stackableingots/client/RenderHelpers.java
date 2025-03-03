@@ -5,24 +5,25 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.FastColor;
 
 
 public final class RenderHelpers
 {
-    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, boolean doShade,int color)
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, boolean doShade, int color)
     {
-        renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, minX, minY, minZ, maxX, maxY, maxZ, 16f * (maxX - minX), 16f * (maxY - minY), 16f * (maxZ - minZ), doShade,color);
+        renderTexturedCuboid(poseStack, buffer, sprite, packedLight, packedOverlay, minX, minY, minZ, maxX, maxY, maxZ, 16f * (maxX - minX), 16f * (maxY - minY), 16f * (maxZ - minZ), doShade, color);
     }
 
     /**
      * Renders a fully textured, solid cuboid described by the shape (minX, minY, minZ) x (maxX, maxY, maxZ).
      * (xPixels, yPixels, zPixels) represent pixel widths for each side, which are used for texture (u, v) purposes.
      */
-    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float xPixels, float yPixels, float zPixels, boolean doShade,int color)
+    public static void renderTexturedCuboid(PoseStack poseStack, VertexConsumer buffer, TextureAtlasSprite sprite, int packedLight, int packedOverlay, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float xPixels, float yPixels, float zPixels, boolean doShade, int color)
     {
-        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getXVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, yPixels, 1, 0, 0, doShade,color);
-        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getYVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, xPixels, 0, 1, 0, doShade,color);
-        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getZVertices(minX, minY, minZ, maxX, maxY, maxZ), xPixels, yPixels, 0, 0, 1, doShade,color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getXVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, yPixels, 1, 0, 0, doShade, color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getYVertices(minX, minY, minZ, maxX, maxY, maxZ), zPixels, xPixels, 0, 1, 0, doShade, color);
+        renderTexturedQuads(poseStack, buffer, sprite, packedLight, packedOverlay, getZVertices(minX, minY, minZ, maxX, maxY, maxZ), xPixels, yPixels, 0, 0, 1, doShade, color);
     }
 
 
@@ -46,12 +47,24 @@ public final class RenderHelpers
 
     public static void renderTexturedVertex(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, boolean doShade,int color)
     {
-        final float shade = doShade ? getShade(normalX, normalY, normalZ) : 1f;
+        float r = FastColor.ARGB32.red(color) / 255.0f;
+        float g = FastColor.ARGB32.green(color) / 255.0f;
+        float b = FastColor.ARGB32.blue(color) / 255.0f;
+        float a = FastColor.ARGB32.alpha(color) / 255.0f;
+
+        if(doShade)
+        {
+            final var shade = getShade(normalX, normalY, normalZ);
+            r *= shade;
+            g *= shade;
+            b *= shade;
+            a = 1.0f;
+        }
+
         buffer.vertex(poseStack.last().pose(), x, y, z)
-                .color(shade, shade, shade, 1f)
+                .color(r, g, b, a)
                 .uv(u, v)
                 .uv2(packedLight)
-                .color(color)
                 .overlayCoords(packedOverlay)
                 .normal(poseStack.last().normal(), normalX, normalY, normalZ)
                 .endVertex();

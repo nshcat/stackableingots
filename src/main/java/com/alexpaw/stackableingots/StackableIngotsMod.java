@@ -1,5 +1,6 @@
 package com.alexpaw.stackableingots;
 
+import com.alexpaw.stackableingots.client.IngotBlockEntityRenderer;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialRegistryEvent;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -73,7 +75,7 @@ public class StackableIngotsMod {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MOD_ID);
 
     public static final RegistryObject<Block> INGOT_BLOCK = BLOCKS.register("ingot_block", IngotBlock::new);
-    public static final RegistryObject<BlockEntityType<?>> INGOT_BLOCK_ENTITY = BLOCK_ENTITIES.register("ingot_block", ()->
+    public static final RegistryObject<BlockEntityType<IngotBlockEntity>> INGOT_BLOCK_ENTITY = BLOCK_ENTITIES.register("ingot_block", ()->
             BlockEntityType.Builder.of(IngotBlockEntity::new, INGOT_BLOCK.get()).build(null));
 
     public StackableIngotsMod() {
@@ -138,7 +140,8 @@ public class StackableIngotsMod {
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
+    public static class ClientModEvents
+    {
 
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) throws IOException, IllegalAccessException {
@@ -149,8 +152,13 @@ public class StackableIngotsMod {
         @SubscribeEvent
         public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event)
         {
-            event.register("ingot_block", IngotBlockModel.INSTANCE);
+            //event.register("ingot_block", IngotBlockModel.INSTANCE);
         }
 
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event)
+        {
+            event.registerBlockEntityRenderer(StackableIngotsMod.INGOT_BLOCK_ENTITY.get(), IngotBlockEntityRenderer::new);
+        }
     }
 }
