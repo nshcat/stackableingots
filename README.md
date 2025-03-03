@@ -1,9 +1,13 @@
 # Stackableingots for GTCEu-Modern 1.20.x
 
-Addon for GTCEu-Modern that allows platyers to stack their ingots as piles in the world.
+Addon for GTCEu-Modern that allows players to stack their ingots as piles in the world.
 Good for dragons (or kobolds) wanting to sit on top of their hoard of precious (and/or hazardous) metals!
 
 Heavily modified (and fixed) version of https://github.com/iglee42/PlaceableIngots.
+
+<p align="center">
+  <img src="/media/ingots.png" width="512">
+</p>
 
 ## How to use
 - Right-click the ground with any number of ingots in your hand to place one ingot
