@@ -24,3 +24,10 @@ Heavily modified (and fixed) version of https://github.com/iglee42/PlaceableIngo
 - Much improved renderer that fixes quite a few bugs (disappearing block, missing lighting, etc)
 - (In my opinion) improved interaction with ingot piles
 - Jade integration
+
+## TODO, mostly dev stuff
+- Make all string literals translateable
+- Either make ingot piles not mineable, or fix mining particles showing the missing texture texture
+- Rework old, bad code from IngotBlock.java
+- Look into not storing a list of ItemStacks in the block entity, but rather item instances
+- Look into issues arising when interacting with e.g. an AE2 terminal while holding an ingot. Currently, this will place an ingot pile in the air. Maybe require solid block under the pile that is to be created
